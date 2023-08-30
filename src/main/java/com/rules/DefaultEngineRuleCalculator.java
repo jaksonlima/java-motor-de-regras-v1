@@ -32,7 +32,7 @@ public class DefaultEngineRuleCalculator implements EngineRuleCalculator {
 
     @Override
     public String percentage() {
-        return valueOf((totalExecution * 100) / totalRules)
+        return valueOf((totalExecution / totalRules) * 100)
                 .concat("%");
     }
 
