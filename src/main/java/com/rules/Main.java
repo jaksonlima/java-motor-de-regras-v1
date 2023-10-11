@@ -1,7 +1,14 @@
 package com.rules;
 
+import com.rules.command.ExtensionMobileRule;
+import com.rules.command.ExtensionRule;
+import com.rules.command.ExtensionUnitRule;
+import com.rules.rules.impl.DefaultRuleEngine;
+import com.rules.rules.impl.RuleInput;
+import com.rules.rules.impl.RuleOutput;
+
 import java.util.List;
-import java.util.concurrent.Executors;
+import java.util.Optional;
 
 public class Main {
 
@@ -15,18 +22,34 @@ public class Main {
                 new ExtensionMobileRule()
         );
 
-        Executors.newVirtualThreadPerTaskExecutor();
+        final var contextRoot = new RuleInput("INIT=");
 
-        final var contextDefaultEngine = DefaultEngine.create(engineRules);
+        Optional<RuleOutput> ruleOutput = DefaultRuleEngine
+                .registerRules(engineRules)
+                .activeSkippedFailure()
+                .executeRules(contextRoot);
 
-        Context contextRoot = new Context("INIT=");
+        final var tupleRules = DefaultRuleEngine
+                .registerRules(engineRules)
+                .activeSkippedFailure()
+                .executeTupleRules(contextRoot);
 
-        final var context = contextDefaultEngine.executeRules(contextRoot);
+        DefaultRuleEngine<RuleInput, RuleOutput> left = tupleRules.left();
 
-        System.out.println(context);
-        System.out.println(contextDefaultEngine.percentage());
-        System.out.println(contextDefaultEngine.order());
-        System.out.println(contextDefaultEngine.status());
+        Optional<RuleOutput> right = tupleRules.right();
+
+//        RuleTuple<DefaultRuleEngine<RuleInput, RuleOutput>, Optional<RuleOutput>> result =
+//                DefaultRuleEngine
+//                        .registerRules(engineRules)
+//                        .executeRules(contextRoot);
+
+//        final Optional<RuleOutput> context = contextDefaultEngine.executeRules(contextRoot);
+//
+//        System.out.println(context);
+//        System.out.println(context6DefaultEngine.percentage());
+//        System.out.println(contextDefaultEngine.order());
+//        System.out.println(contextDefaultEngine.status());
+        System.out.println("Result");
     }
 
 }
